@@ -2,10 +2,10 @@
 
 import { FormState } from "./loginAction";
 
-export const registerAction =async (prevState:FormState ,formData:FormData)=>{
-    const name  = formData.get("name");
-    const email = formData.get("email");
-    const password= formData.get("password")
+export const registerAction =async (prevState:FormState ,formData:FormData):Promise<FormState>=>{
+    const name  = formData.get("name")as string;
+    const email = formData.get("email")as string;
+    const password= formData.get("password")as string;
 
     //static image url hardcoded
     const profilePhoto = "https://www.google.com";

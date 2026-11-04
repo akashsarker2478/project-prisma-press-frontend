@@ -1,14 +1,19 @@
 "use server"
+
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
 export type FormState={
     success: boolean;
+    statusCode?: number;
     message: string;
     data?: unknown;
 } | null;
 
-export const loginAction = async(prevState : FormState ,formData : FormData)=>{
+export const loginAction = async(prevState : FormState ,formData : FormData):Promise<FormState>=>{
     // console.log(formData);
-    const email = formData.get("email")
-    const password = formData.get("password")
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
     const payload = {
         email,
         password
@@ -23,20 +28,34 @@ export const loginAction = async(prevState : FormState ,formData : FormData)=>{
     });
 
     const result = await res.json();
-
-    if (!res.ok) {
-      return {
-        success: false,
-        message: result.message || "Login failed. Invalid credentials!",
-      };
+    if(res.ok && result.success){
+        const cookieStore = await cookies();
+        if(result.data?.accessToken){
+            cookieStore.set("accessToken",result.data.accessToken,{
+                httpOnly:true,
+                maxAge:60*60*24,//1 day
+                sameSite:"lax",
+                secure:process.env.NODE_ENV === "production"
+            })
+        };
+        if(result.data?.refreshToken){
+        cookieStore.set("refreshToken",result.data.refreshToken,{
+            httpOnly:true,
+            maxAge:60*60*24*7, //7day
+            sameSite:"lax",
+            secure:process.env.NODE_ENV === "production"
+        })
     }
 
-    return {
-      success: true,
-      message: "Login successful!",
-      data: result,
+    redirect("/dashboard")
+
     };
-  } catch{
+
+   return result;
+  } catch(error : unknown){
+    if (error instanceof Error && error?.message === "NEXT_REDIRECT") {
+      throw error;
+    }
     return {
       success: false,
       message: "Something went wrong! Please try again later.",

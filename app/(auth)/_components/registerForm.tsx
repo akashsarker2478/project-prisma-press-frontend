@@ -4,20 +4,20 @@ import { Card } from '@/components/ui/card';
 import { useActionState, useEffect } from 'react';
 import { registerAction } from '../_actions/registerAction';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 
 const RegisterForm = () => {
     const [state,action,isPending] = useActionState(registerAction,null)
+    const router = useRouter()
     useEffect(()=>{
-        if(!state) return;
-        if(state?.message){
-            if(state.success){
-                toast.success(state.message)
-            }else {
-        toast.error(state.message);
+      if(state && state.success === true){
+        toast.success(state.message || "Registration successful!")
+        router.push("/login")
+      }else if(state && state.success === false){
+        toast.error(state.message || "Registration failed!")
       }
-        }
-    },[state])
+    },[state,router])
     return (
           <form  action={action} className='space-y-4'>
         <Card className='p-6 space-y-4'>

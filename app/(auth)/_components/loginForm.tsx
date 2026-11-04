@@ -8,14 +8,9 @@ import { toast } from 'sonner';
 const LoginForm = () => {
     const [state,action,isPending] = useActionState(loginAction,null)
     useEffect(()=>{
-        if(!state) return;
-        if(state?.message){
-            if(state.success){
-                toast.success(state.message)
-            }else {
-        toast.error(state.message);
-      }
-        }
+       if(state && state.success === false){
+        toast.error(state.message || "Login failed!");
+       }
     },[state])
     return (
        <form action={action} className='space-y-4'>
