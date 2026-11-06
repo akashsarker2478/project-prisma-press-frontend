@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -47,11 +48,13 @@ export const loginAction = async(prevState : FormState ,formData : FormData):Pro
         })
     }
 
-    redirect("/dashboard")
+  revalidatePath("/", "layout");
 
+    }else{
+      return result;
     };
 
-   return result;
+   
   } catch(error : unknown){
     if (error instanceof Error && error?.message === "NEXT_REDIRECT") {
       throw error;
@@ -61,4 +64,5 @@ export const loginAction = async(prevState : FormState ,formData : FormData):Pro
       message: "Something went wrong! Please try again later.",
     };
   }
+    redirect("/dashboard")
 }

@@ -3,6 +3,8 @@ import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Navbar } from "@/components/shared/navbar";
+import ThemeProvider from "@/components/providers/theme-providers";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -13,13 +15,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", "font-sans", geist.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn("h-full", "antialiased", "font-sans", geist.variable)}>
       <body className="min-h-full flex flex-col">
-
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          
         <Toaster position="top-right" richColors></Toaster>
         {/* navbar */}
+        <Navbar></Navbar>
         {children}
         {/* footer */}
+        </ThemeProvider>
         </body>
     </html>
   );
