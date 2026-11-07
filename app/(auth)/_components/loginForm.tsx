@@ -7,13 +7,19 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
-    
+    const router = useRouter()
     const [state,action,isPending] = useActionState(loginAction,null)
     useEffect(()=>{
-       if(state && state.success === false){
-        toast.error(state.message || "Login failed!");
-       }
-    },[state])
+      if (state?.success === false) {
+      toast.error(state.message || "Login failed!");
+    }
+
+    if (state?.success === true) {
+      toast.success("Login successful!");
+      router.refresh();  
+      router.push("/dashboard");
+    }
+    },[state,router])
     return (
        <form action={action} className='space-y-4'>
         <Card className='p-6 space-y-4'>

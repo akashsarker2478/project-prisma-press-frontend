@@ -48,7 +48,7 @@ export const loginAction = async(prevState : FormState ,formData : FormData):Pro
         })
     }
 
-  revalidatePath("/", "layout");
+  return result;
 
     }else{
       return result;
@@ -64,5 +64,5 @@ export const loginAction = async(prevState : FormState ,formData : FormData):Pro
       message: "Something went wrong! Please try again later.",
     };
   }
-    redirect("/dashboard")
+    
 }
